@@ -1,5 +1,5 @@
 const express = require('express');
-
+const Posts = require('./postDb');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  // do your magic!
+
 });
 
 router.delete('/:id', (req, res) => {
