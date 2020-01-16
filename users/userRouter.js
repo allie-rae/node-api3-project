@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
 //       });
 // });
 
-router.post('/', validateUserId, (req, res) => {
+router.post('/', validateUser, (req, res) => {
   let user = req.body;
   Users.insert(user)
     .then(user => {
@@ -110,8 +110,16 @@ function validateUserId(req, res, next) {
 };
 
 function validateUser(req, res, next) {
-
-}
+  let body = req.body;
+  let name = req.body.name;
+  if(!body) {
+    res.status(400).json({ errorMessage: "Missing user data."})
+  } else if (!name) {
+    res.status(400).json({ errorMessage: "Missing required name field."})
+  } else {
+    next();
+  };
+};
 
 function validatePost(req, res, next) {
   // do your magic!
