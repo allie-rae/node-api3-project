@@ -1,5 +1,6 @@
 const express = require('express');
 const Users = require('./userDb');
+const Posts = require('../posts/postDb');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -13,23 +14,22 @@ router.get('/', (req, res) => {
     });
 });
 
-// router.post('/:id/posts', (req, res) => {
-//   let resource = req.body;
-//   let text = req.body.text;
-//   let user_id = req.params.id;
-//   req.body.user_id = user_id;
-//   console.log(resource)
-//   !text
-//     ? res.status(404).json({ errorMessage: "Missing body text." })
-//     : Posts.insert(resource)
-//       .then(response => {
-//         res.status(201).json(response)
-//       })
-//       .catch(err => {
-//         console.log(err);
-//         res.status(500).json({ errorMessage: "Post could not be saved to database." })
-//       });
-// });
+router.post('/:id/posts', validatePost, (req, res) => {
+  let resource = req.body;
+  let user_id = req.params.id;
+  req.body.user_id = user_id;
+
+  console.log(resource)
+
+    Posts.insert(resource)
+      .then(response => {
+        res.status(201).json(response)
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({ errorMessage: "Post could not be saved to database." })
+      });
+});
 
 router.post('/', validateUser, (req, res) => {
   let user = req.body;
@@ -122,7 +122,15 @@ function validateUser(req, res, next) {
 };
 
 function validatePost(req, res, next) {
-  // do your magic!
+  let body = req.body;
+  let text = req.body.text;
+  if(!body) {
+    res.status(400).json({ errorMessage: "Missing post data."})
+  } else if (!text) {
+    res.status(400).json({ errorMessage: "Missing required text field."})
+  } else {
+    next();
+  };
 }
 
 module.exports = router;
