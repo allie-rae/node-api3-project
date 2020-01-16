@@ -31,75 +31,86 @@ router.get('/', (req, res) => {
 //       });
 // });
 
-router.post('/', (req, res) => {
+router.post('/', validateUserId, (req, res) => {
   let user = req.body;
   Users.insert(user)
-  .then(user => {
-    res.status(201).json(user);
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "Error posting user to database." });
-  });
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "Error posting user to database." });
+    });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   let id = req.params.id;
   Users.getById(id)
-  .then(response => {
-    res.status(200).json(response);
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "Error retrieving user from database."});
-  });
+    .then(response => {
+      res.status(200).json(response);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "Error retrieving user from database." });
+    });
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   let id = req.params.id;
   Users.getUserPosts(id)
-  .then(posts => {
-    res.status(200).json(posts);
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "Error retrieving posts from database."});
-  });
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "Error retrieving posts from database." });
+    });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   id = req.params.id;
   Users.remove(id)
-  .then(user => {
-    res.status(200).json({ message: "The user has been deleted."});
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json({ errorMessage: "Error deleting user from database."});
-  });
+    .then(user => {
+      res.status(200).json({ message: "The user has been deleted." });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "Error deleting user from database." });
+    });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
   let id = req.params.id;
   let changes = req.body;
 
   Users.update(id, changes)
-  .then(user => {
-    res.status(200).json({ errorMessage: "User was updated."});
-  })
-  .catch(err => {
-    res.status(500).json({ errorMessage: "Error updating user in database." });
-  });
+    .then(user => {
+      res.status(200).json({ errorMessage: "User was updated." });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "Error updating user in database." });
+    });
 });
 
 //custom middleware
 
 function validateUserId(req, res, next) {
-  // do your magic!
-}
+  let id = req.params.id;
+  Users.getById(id)
+    .then(user => {
+      !user
+        ? res.status(404).json({ errorMessage: "Invalid user ID." })
+        : req.user = user;
+      next();
+    })
+    .catch(err => {
+      console.log(err)
+    })
+};
 
 function validateUser(req, res, next) {
-  // do your magic!
+
 }
 
 function validatePost(req, res, next) {
