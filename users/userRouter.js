@@ -19,16 +19,14 @@ router.post('/:id/posts', validatePost, (req, res) => {
   let user_id = req.params.id;
   req.body.user_id = user_id;
 
-  console.log(resource)
-
-    Posts.insert(resource)
-      .then(response => {
-        res.status(201).json(response)
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({ errorMessage: "Post could not be saved to database." })
-      });
+  Posts.insert(resource)
+    .then(response => {
+      res.status(201).json(response)
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ errorMessage: "Post could not be saved to database." })
+    });
 });
 
 router.post('/', validateUser, (req, res) => {
@@ -112,10 +110,10 @@ function validateUserId(req, res, next) {
 function validateUser(req, res, next) {
   let body = req.body;
   let name = req.body.name;
-  if(!body) {
-    res.status(400).json({ errorMessage: "Missing user data."})
+  if (!body) {
+    res.status(400).json({ errorMessage: "Missing user data." })
   } else if (!name) {
-    res.status(400).json({ errorMessage: "Missing required name field."})
+    res.status(400).json({ errorMessage: "Missing required name field." })
   } else {
     next();
   };
@@ -124,10 +122,10 @@ function validateUser(req, res, next) {
 function validatePost(req, res, next) {
   let body = req.body;
   let text = req.body.text;
-  if(!body) {
-    res.status(400).json({ errorMessage: "Missing post data."})
+  if (!body) {
+    res.status(400).json({ errorMessage: "Missing post data." })
   } else if (!text) {
-    res.status(400).json({ errorMessage: "Missing required text field."})
+    res.status(400).json({ errorMessage: "Missing required text field." })
   } else {
     next();
   };
